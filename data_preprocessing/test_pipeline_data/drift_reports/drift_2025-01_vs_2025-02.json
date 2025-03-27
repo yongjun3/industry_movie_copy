@@ -1,0 +1,9 @@
+{
+  "drift_detected": false,
+  "drift_metrics": {
+    "rating_js_divergence": 0.005088075338131116,
+    "user_activity_change_ratio": 0.038461538461538575,
+    "size_ratio": 0.5769230769230769
+  },
+  "timestamp": "2025-03-14T00:34:37.445595"
+}

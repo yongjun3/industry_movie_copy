@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+
+  inference:
+    # TODO: Build the container using Dockerfile.infer
+    build:
+      context: .
+      dockerfile: Dockerfile.infer
+    #Use a shared volume to load the trained model
+    volumes:
+      - model_storage:/app/models
+      - ../data:/app/data
+    # TODO: Expose port 8080 (or any other port) for the Flask app
+    ports:
+      - "8082:8082"
+    command: ["python", "server_oe.py"]
+
+#Define a shared volume for the model file
+volumes:
+  model_storage:
+    driver: local
