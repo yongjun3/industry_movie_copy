@@ -1,0 +1,45 @@
+version: "3.8"
+
+services:
+  load_balancer:
+    build:
+      context: .
+      dockerfile: Dockerfile.ab_testing_LB
+    ports:
+      - "8081:8081"
+    environment:
+      - MODEL_SERVERS=http://user_model:8082,http://new_movie_model:8082
+    depends_on:
+      - user_model
+      - new_movie_model
+    networks:
+      - recommender_net
+    restart: unless-stopped
+
+  user_model:
+    build:
+      context: ..
+      dockerfile: Dockerfile.user_model
+    volumes:
+      - model_storage:/app/models
+    networks:
+      - recommender_net
+    restart: unless-stopped
+
+  new_movie_model:
+    build:
+      context: ..
+      dockerfile: Dockerfile.mixed_model
+    volumes:
+      - model_storage:/app/models
+    networks:
+      - recommender_net
+    restart: unless-stopped
+
+networks:
+  recommender_net:
+    driver: bridge
+
+volumes:
+  model_storage:
+    driver: local

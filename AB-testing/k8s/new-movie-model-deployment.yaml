@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: new-movie-model
+  labels:
+    app: new-movie-model
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: new-movie-model
+  template:
+    metadata:
+      labels:
+        app: new-movie-model
+    spec:
+      containers:
+        - name: new-movie-model
+          image: mkennyro/new-movie-model:1.0.0
+          ports:
+            - containerPort: 8082

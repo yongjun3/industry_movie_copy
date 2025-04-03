@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: movies-load-balancer
+  labels:
+    app: movies-load-balancer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: movies-load-balancer
+  template:
+    metadata:
+      labels:
+        app: movies-load-balancer
+    spec:
+      containers:
+        - name: load-balancer
+          image: mkennyro/ab-testing-load-balancer:1.0.1
+          ports:
+            - containerPort: 8081
+          env:
+            - name: MODEL_SERVERS
+              value: "http://user-model-service:8082,http://new-movie-model-service:8082"

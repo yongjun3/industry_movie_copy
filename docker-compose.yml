@@ -1,0 +1,61 @@
+version: "3.8"
+
+services:
+  load_balancer:
+    build:
+      context: .
+      dockerfile: Dockerfile.load_balancer
+    ports:
+      - "8082:8082"
+    environment:
+      - MODEL_SERVERS=http://user_model:8082,http://new_movie_model:8082
+    depends_on:
+      - user_model
+      - new_movie_model
+    restart: unless-stopped
+
+  user_model:
+    build:
+      context: .
+      dockerfile: Dockerfile.user_model
+    volumes:
+      - model_storage:/app/models
+    restart: unless-stopped
+
+  new_movie_model:
+    build:
+      context: .
+      dockerfile: Dockerfile.mixed_model
+    volumes:
+      - model_storage:/app/models
+    restart: unless-stopped
+
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    volumes:
+      - ./prometheus/:/etc/prometheus/
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+    expose:
+      - 9090
+    ports:
+      - 9090:9090
+
+  node-exporter:
+    image: quay.io/prometheus/node-exporter:latest
+    container_name: nodeexporter
+    ports:
+      - 9100:9100
+    expose:
+      - 9100
+
+  grafana:
+    image: grafana/grafana-oss:latest
+    container_name: grafana
+    ports:
+      - 3000:3000
+
+volumes:
+  model_storage:
+    driver: local

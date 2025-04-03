@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-model
+  labels:
+    app: user-model
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: user-model
+  template:
+    metadata:
+      labels:
+        app: user-model
+    spec:
+      containers:
+        - name: user-model
+          image: mkennyro/user-model:1.0.0
+          ports:
+            - containerPort: 8082
