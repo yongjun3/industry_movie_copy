@@ -1,0 +1,17 @@
+# Base image
+FROM python:3.9-slim
+
+# Set the working directory to /app
+WORKDIR /app
+
+# Install the Python dependencies
+RUN pip install --no-cache-dir flask requests
+
+# Copy necessary files
+COPY load_balancer.py .
+
+# Expose port 8082 for the Flask app
+EXPOSE 8082
+
+# Set the command to run the Flask app
+CMD ["python", "load_balancer.py"]
