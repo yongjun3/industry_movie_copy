@@ -1,0 +1,22 @@
+groups:
+- name: service_health_alerts
+  rules:
+  # Availability alert (based on proportion of 200 status codes)
+  - alert: LowAvailability
+    expr: sum(rate(request_count{http_status="200"}[5m])) / sum(rate(request_count[5m])) < 0.95
+    for: 2m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Service Availability Below Threshold"
+      description: "Recommendation service availability has dropped below 95% (current: {{ $value | humanizePercentage }})"
+
+  # CPU usage alert (using node_exporter metrics)
+  - alert: HighCPUUsage
+    expr: 100 - (avg by(instance) (irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 80
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "High CPU Usage"
+      description: "CPU usage is above 80% for 5 minutes (current: {{ $value }}%)"
